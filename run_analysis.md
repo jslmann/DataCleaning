@@ -1,5 +1,5 @@
 
-Last updated 2014-06-22 00:40:41 using R version 3.1.0 (2014-04-10).
+Last updated 2014-06-22 01:26:08 using R version 3.1.0 (2014-04-10).
 
 ## Introduction
 
@@ -40,7 +40,7 @@ Check to see if the data files are present and if not, fetch them.
 		zipfile="data/UCI_HAR_data.zip"
 		message("Downloading data")
 		download.file(fileURL, destfile=zipfile, method="curl")
-unzip(zipfile, exdir="data")
+		unzip(zipfile, exdir="data")
     }
 ```
 
@@ -57,7 +57,7 @@ Load data files into distinct dataframes.
 	test.activity <- read.table("data/UCI HAR Dataset/test/y_test.txt")
 	test.subject <- read.table("data/UCI HAR Dataset/test/subject_test.txt")
 ```
-Merge tables into a dataframe.
+Combine the dataframes into one composite dataframe.
 
 
 ```r
@@ -96,12 +96,13 @@ without confusion arising from paranthesis.
 #Rename the feature columns with descriptive names
 
 ```r
-	colnames(df.mean.std) <- c("subject","activity", as.vector(features[(mean.cols | std.cols), 2]))
+	colnames(df.mean.std) <- 
+		c("subject","activity", as.vector(features[(mean.cols | std.cols), 2]))
 ```
 
 #Create a second, independent tidy dataset
 
-Load library `dplyr`, and create dataframe with `ddply` which groups data by `subject` and
+Load library `plyr`, and create a dataframe with the function `ddply` which groups data by `subject` and
 `activity` and returns the means of the feature variables for each group.
 `tidy` is a dataframe of 180 rows (30 subjects x 6 activities) with 66 variables (33 mean() and 33 std()).
 
@@ -109,9 +110,9 @@ Load library `dplyr`, and create dataframe with `ddply` which groups data by `su
 ```r
 	library(plyr)
 	tidy <- ddply(df.mean.std, 
-				  .(subject, activity), 
-				  function(df) colMeans(df[,3:ncol(df.mean.std)])
-				  )
+				.(subject, activity), 
+				function(df) colMeans(df[,3:ncol(df.mean.std)])
+				)
 ```
 
 #Export `tidy` dataframe to a csv file
